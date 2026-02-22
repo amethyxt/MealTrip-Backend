@@ -1,0 +1,96 @@
+### (1) ทดสอบสมัครสมาชิก (User Registration)
+# นี่คือการ "ส่ง" (POST) ข้อมูลไปที่ API ที่เราสร้างไว้
+POST http://localhost:3000/api/users/register
+Content-Type: application/json
+
+{
+    "username": "testfriend1",
+    "email": "friend1@example.com",
+    "password": "1234"
+}
+
+### =======================================
+### (2) ทดสอบสร้างทริปใหม่ (Create Trip)
+
+# (สำคัญ!)
+# คุณต้องไป "คัดลอก" `_id` ของ User ที่คุณสร้างสำเร็จ (จากผลลัพธ์ข้อ 1)
+# แล้วนำมา "วางทับ" ตรง "YOUR_USER_ID_HERE" ข้างล่างนี้
+# (มันจะหน้าตาประมาณ "60b0...aab83")
+
+POST http://localhost:3000/api/trips
+Content-Type: application/json
+
+{
+    "trip_name": "ทริปตะลุยเยาวราช",
+    "host_id": "690db02ee4c5b9d83aa80d83", 
+    "budget_money": 3000,
+    "constraints": {
+        "categories": [
+            { "type": "restaurant", "count": 1 },
+            { "type": "dessert", "count": 1 }
+        ]
+    }
+}
+
+### =======================================
+### (3) ทดสอบเข้าร่วมทริป (Join Trip)
+# เราต้องใช้:
+# 1. "invite_code" จากผลลัพธ์ข้อ (2) (เช่น "A466GZ")
+# 2. "user_id" ของเพื่อนคนใหม่ (ต้องสมัคร User ใหม่อีกคนก่อนนะครับ!)
+
+POST http://localhost:3000/api/trips/join
+Content-Type: application/json
+
+{
+    "invite_code": "GQRJCD",
+    "user_id": "691048706dbc6b7f4e4c6747"
+}
+
+### =======================================
+### (4) ทดสอบส่งคะแนนโหวต (Vote)
+# เราต้องใช้:
+# 1. "trip_id" (ID ของทริป... เอาจากผลลัพธ์ข้อ 2 หรือ 3 ก็ได้)
+# 2. "user_id" (ID ของ "สมาชิก" ที่อยู่ในทริปนั้น... เช่น "691048...")
+# 3. "poi_id" (ID ของสถานที่... ตอนนี้เราจะ "สมมติ" ขึ้นมาเองก่อน)
+# 4. "score" (คะแนน 1-5)
+
+POST http://localhost:3000/api/votes
+Content-Type: application/json
+
+{
+    "trip_id": "691048f46dbc6b7f4e4c674b",
+    "user_id": "691048706dbc6b7f4e4c6747",
+    "poi_id": "poi_2_yaowarat_dessert",
+    "score": 3
+}
+
+### =======================================
+### (5) ทดสอบประมวลผล (Get Results)
+# นี่คือ API "สมอง" ของเราครับ
+# เราจะใช้ "GET" (ดึงข้อมูล) ไม่ใช่ "POST"
+# เราต้องเอา "trip_id" (ที่เราใช้โหวตในข้อ 4) มาใส่ใน "ลิงก์" (URL) ครับ
+
+GET http://localhost:3000/api/trips/691048f46dbc6b7f4e4c674b/results
+
+### =======================================
+### (6) ทดสอบล็อกอิน (Login)
+# ใช้ "email" และ "password" ของ User ที่คุณ "เคยสมัคร" (Register) สำเร็จแล้ว
+# (เช่น "friend1@example.com" / "1234" จากข้อ 1)
+
+POST http://localhost:3000/api/users/login
+Content-Type: application/json
+
+{
+    "email": "amethyxt@gmail.com",
+    "password": "1234"
+} 
+#
+
+### =======================================
+### (7) (งานยาก) ทดสอบ "API 7" (ดึงข้อมูลจริงจาก Google) <-- อันใหม่!
+# เราจะ "ยิง" (Fire) GET /api/pois
+# ...และ "ส่ง" (Send) "คำค้นหา" (Query) (q=...)
+# (เราต้อง "encode" ช่องว่าง (space) 
+#  "restaurants in Yaowarat" ➡️ "restaurants%20in%20Yaowarat")
+
+GET http://localhost:3000/api/pois?q=restaurants%20in%20Yaowarat
