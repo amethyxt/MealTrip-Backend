@@ -31,9 +31,14 @@ if (!MONGO_URI) {
 }
 
 mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log("เชื่อมต่อกับ MongoDB สำเร็จ!"))
-  .catch((error) => console.log("เชื่อมต่อ MongoDB ไม่ติด...", error));
+  .connect(MONGO_URI, {
+    dbName: "mealtrip",   // ⭐ บังคับใช้ database นี้
+  })
+  .then(() => console.log("✅ เชื่อมต่อกับ MongoDB สำเร็จ!"))
+  .catch((error) => {
+    console.error("❌ เชื่อมต่อ MongoDB ไม่ติด...");
+    console.error(error.message);
+  });
 
 app.get("/", (req, res) => res.send("สวัสดี! Server ของ Meal Trip ทำงานแล้ว"));
 
