@@ -9,6 +9,7 @@ const Member = require("./models/Member");
 const Vote = require("./models/Vote");
 const axios = require("axios");
 require("dotenv").config();
+const plantripRoutes = require("./src/routes/plantrip.routes");
 
 // ✅ MOCK POIS (60 places)
 const mockPois = require("./mock_pois.json");
@@ -16,6 +17,7 @@ const mockPoiMap = new Map((mockPois || []).map((p) => [p.poiId, p]));
 
 const app = express();
 app.use(express.json());
+app.use("/api/plantrip", plantripRoutes);
 
 // ✅ เสิร์ฟไฟล์รูปจากโฟลเดอร์ images
 app.use("/images", express.static(path.join(__dirname, "images")));
